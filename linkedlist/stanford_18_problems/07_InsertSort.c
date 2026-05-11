@@ -7,9 +7,14 @@
 
 void InsertSort(struct node** headRef)
 {
+    struct node* result = NULL;
     struct node* current = *headRef;
-    while(current->next != NULL)
+    struct node* next = NULL;
+    while(current)
     {
-        
+        next = current->next;
+        SortedInsert(&result, current);
+        current = next;
     }
+    *headRef = result;
 }
