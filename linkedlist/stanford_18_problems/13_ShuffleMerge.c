@@ -5,16 +5,29 @@
 #include "../Basic_Operations/BasicOperations.h"
 #include <stdlib.h>
 
-void InsertTail(struct node* headRef, int data)
+/*
+ Solution 1 given by myself
+*/
+ void InsertTail(struct node** headRef, int data)
 {
-    while(headRef->next)
-    {
-        headRef = headRef->next;
-    }
     struct node* newNode = (struct node*)malloc(sizeof(struct node));
     newNode->data = data;
     newNode->next = NULL;
-    headRef->next = newNode;
+
+    if(*headRef == NULL)
+    {
+        *headRef = newNode;
+    }
+    else
+    {
+        struct node* current = *headRef;
+        while(current->next)
+        {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+    
 }
 
 struct node* ShuffleMerge(struct node* a, struct node* b)
@@ -27,7 +40,7 @@ struct node* ShuffleMerge(struct node* a, struct node* b)
         a = a->next;
         b = b->next;
     }
-    if(a == NULL)
+    if(a == NULL && b != NULL)
     {
         while(b)
         {
@@ -35,7 +48,7 @@ struct node* ShuffleMerge(struct node* a, struct node* b)
             b = b->next;
         }
     }
-    if(b == NULL)
+    if(b == NULL && a != NULL)
     {
         while(a)
         {
@@ -44,4 +57,83 @@ struct node* ShuffleMerge(struct node* a, struct node* b)
         }
     }
     return result;
+}
+
+/*
+    Solution 2 given by stanford
+*/
+struct node* ShuffleMerge(struct node* a, struct node* b) {
+    struct node dummy;
+    struct node* tail = &dummy;
+    dummy.next = NULL;
+    while (1) {
+        if (a==NULL) { // empty list cases
+            tail->next = b;
+            break;
+        }
+        else if (b==NULL) {
+            tail->next = a;
+            break;
+        }
+        else { // common case: move two nodes to tail
+            tail->next = a;
+            tail = a;
+            a = a->next;
+            tail->next = b;
+            tail = b;
+            b = b->next;
+        }
+    }
+    return(dummy.next);
+}
+
+/*
+    Solution 3 given by stanford
+*/
+struct node* ShuffleMerge(struct node* a, struct node* b) {
+    struct node dummy;
+    struct node* tail = &dummy;
+    dummy.next = NULL;
+    while (1) {
+        if (a==NULL) {
+            tail->next = b;
+            break;
+        }
+        else if (b==NULL) {
+            tail->next = a;
+            break;
+        }
+        else {
+            MoveNode(&(tail->next), &a);
+            tail = tail->next;
+            MoveNode(&(tail->next), &b);
+            tail = tail->next;
+        }
+    }
+    return(dummy.next);
+}
+
+/*
+    Solution 4 given by stanford
+*/
+struct node* ShuffleMerge(struct node* a, struct node* b) {
+    struct node* result = NULL;
+    struct node** lastPtrRef = &result;
+    while (1) {
+        if (a==NULL) {
+            *lastPtrRef = b;
+            break;
+        }
+        else if (b==NULL) {
+            *lastPtrRef = a;
+            break;
+        }
+        else {
+            MoveNode(lastPtrRef, &a);
+            lastPtrRef = &((*lastPtrRef)->next);
+            MoveNode(lastPtrRef, &b);
+            lastPtrRef = &((*lastPtrRef)->next);
+        }
+    }
+    return(result);
 }
