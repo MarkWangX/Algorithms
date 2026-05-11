@@ -12,7 +12,7 @@ void Append(struct node** aRef, struct node** bRef)
         {
             current = current->next;
         }
-        current = *bRef;
+        current->next = *bRef;
     }
     (*bRef) = NULL;
 }
